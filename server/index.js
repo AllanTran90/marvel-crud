@@ -1,3 +1,4 @@
+const db = require('./database');
 const express = require('express');
 const cors = require('cors');
 
@@ -10,6 +11,11 @@ app.use(express.json());
 app.get('/api/test', (req, res) =>{
     res.json({message: 'server work!! WIIHOO!'});
 });
+
+app.get('/api/movies', ( req, res) =>{
+    const movie = db.prepare('SELECT * FROM movies').all();
+    res.json(movies);
+} )
 
 app.listen(PORT,() => {
     console.log(`server running on http://localhost:${PORT}`);
