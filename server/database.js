@@ -1,6 +1,7 @@
 const Database = require('better-sqlite3');
+const path = require('path');
 
-const db = new Database('marvel.db');
+const db = new Database(path.join(__dirname, 'marvel.db'));
 
 // Skapa tabellerna om de inte redan finns
 db.exec(`

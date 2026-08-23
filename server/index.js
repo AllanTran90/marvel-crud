@@ -13,9 +13,17 @@ app.get('/api/test', (req, res) =>{
 });
 
 app.get('/api/movies', ( req, res) =>{
-    const movie = db.prepare('SELECT * FROM movies').all();
+    const movies = db.prepare('SELECT * FROM movies').all();
     res.json(movies);
 } )
+
+app.post('/api/movies', (res, req) => {
+    const { title, release_year} = res.body;
+    const stmt = db.prepare('INSERT INTO movies (title, release_year) VALUES(?, ?)');
+    const result = stmt.run( title, release_year);
+    res.json({ id:result.lastInsertRowid, title, release_year});
+
+})
 
 app.listen(PORT,() => {
     console.log(`server running on http://localhost:${PORT}`);
