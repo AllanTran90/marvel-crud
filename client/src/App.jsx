@@ -16,6 +16,13 @@ useEffect (() =>{
       <h1>
         Marvel Movies
       </h1>
+      <ul>
+        {movies.map((movie) => (
+          <li key={movie.id}>
+            {movie.title} ({movie.release_year})
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
