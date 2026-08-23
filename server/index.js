@@ -17,8 +17,8 @@ app.get('/api/movies', ( req, res) =>{
     res.json(movies);
 } )
 
-app.post('/api/movies', (res, req) => {
-    const { title, release_year} = res.body;
+app.post('/api/movies', (req, res) => {
+    const { title, release_year} = req.body;
     const stmt = db.prepare('INSERT INTO movies (title, release_year) VALUES(?, ?)');
     const result = stmt.run( title, release_year);
     res.json({ id:result.lastInsertRowid, title, release_year});
