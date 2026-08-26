@@ -31,6 +31,17 @@ const handleSubmit = (e) => {
       .catch((err) => console.error('Something went wrong when adding movie:', err));
   };
 
+    const handleDelete = (id) => {
+    fetch(`http://localhost:3001/api/movies/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setMovies(movies.filter((movie) => movie.id !== id));
+      })
+      .catch((err) => console.error('Something went wrong when deleting movie:', err));
+  };
+
   return (
     <div>
       <h1>
@@ -57,6 +68,7 @@ const handleSubmit = (e) => {
         {movies.map((movie) => (
           <li key={movie.id}>
             {movie.title} ({movie.releaseYear})
+            <button onClick={() => handleDelete(movie.id)}>Delete</button>
           </li>
         ))}
       </ul>
