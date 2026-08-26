@@ -5,10 +5,11 @@ const db = new Database(path.join(__dirname, 'marvel.db'));
 
 // Skapa tabellerna om de inte redan finns
 db.exec(`
+
   CREATE TABLE IF NOT EXISTS movies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
-    release_year INTEGER NOT NULL
+    releaseYear INTEGER NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS actors (

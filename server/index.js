@@ -17,13 +17,27 @@ app.get('/api/movies', ( req, res) =>{
     res.json(movies);
 } )
 
-app.post('/api/movies', (req, res) => {
-    const { title, release_year} = req.body;
-    const stmt = db.prepare('INSERT INTO movies (title, release_year) VALUES(?, ?)');
-    const result = stmt.run( title, release_year);
-    res.json({ id:result.lastInsertRowid, title, release_year});
+app.put('/api/movies/:id', (req, res) =>{
+    const { id } = req.params;
+    const { title, releaseYear } = req.body;
+    const stmt = db.prepare('UPDATE movies SET title = ?, releaseYear = ? WHERE id = ?');
+    const result = stmt.run(title, releaseYear, id);
+    res.json({ id: Number(id), title, releaseYear });
+ })
 
-})
+app.delete('/api/movies/:id', (req, res) => {
+    const { id } = req.params;
+    const stmt = db.prepare('DELETE FROM movies WHERE id = ?');
+    stmt.run(id);
+    res.json({ message: `Movie ${id} deleted` });
+});
+
+app.post('/api/movies', (req, res) => {
+    const { title, releaseYear} = req.body;
+    const stmt = db.prepare('INSERT INTO movies (title, releaseYear) VALUES(?, ?)');
+    const result = stmt.run( title, releaseYear);
+    res.json({ id:result.lastInsertRowid, title, releaseYear});
+});
 
 app.listen(PORT,() => {
     console.log(`server running on http://localhost:${PORT}`);
