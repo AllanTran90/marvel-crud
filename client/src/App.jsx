@@ -1,27 +1,27 @@
 import { useState, useEffect } from 'react'
 import './App.css';
+import MovieCard from './MovieCard';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [title, setTitle] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
-  
-useEffect (() =>{
-  fetch('http://localhost:3001/api/movies')
-    .then((res) => res.json())
-    .then((data) => setMovies(data))
-    .catch((err) => console.error('Something went wrong in fetch:', err));
-}, []);
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  useEffect(() => {
+    fetch('http://localhost:3001/api/movies')
+      .then((res) => res.json())
+      .then((data) => setMovies(data))
+      .catch((err) => console.error('Something went wrong in fetch:', err));
+  }, []);
 
-  fetch('http://localhost:3001/api/movies', {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    fetch('http://localhost:3001/api/movies', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, releaseYear: releaseYear }),
+      body: JSON.stringify({ title, releaseYear }),
     })
-
       .then((res) => res.json())
       .then((newMovie) => {
         setMovies([...movies, newMovie]);
@@ -31,7 +31,7 @@ const handleSubmit = (e) => {
       .catch((err) => console.error('Something went wrong when adding movie:', err));
   };
 
-    const handleDelete = (id) => {
+  const handleDelete = (id) => {
     fetch(`http://localhost:3001/api/movies/${id}`, {
       method: 'DELETE',
     })
@@ -44,11 +44,9 @@ const handleSubmit = (e) => {
 
   return (
     <div>
-      <h1>
-        Marvel Movies
-      </h1>
+      <h1>Marvel Movies</h1>
 
-           <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Title"
@@ -62,16 +60,13 @@ const handleSubmit = (e) => {
           onChange={(e) => setReleaseYear(e.target.value)}
         />
         <button type="submit">Add movie</button>
-
       </form>
-      <ul>
+
+      <div className="movie-grid">
         {movies.map((movie) => (
-          <li key={movie.id}>
-            {movie.title} ({movie.releaseYear})
-            <button onClick={() => handleDelete(movie.id)}>Delete</button>
-          </li>
+          <MovieCard key={movie.id} movie={movie} onDelete={handleDelete} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

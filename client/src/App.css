@@ -182,3 +182,27 @@
     border-right-color: var(--border);
   }
 }
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.movie-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.movie-card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.movie-card p {
+  margin: 0 0 0.75rem;
+  color: #666;
+}
