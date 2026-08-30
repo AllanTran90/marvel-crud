@@ -1,7 +1,7 @@
-import { useParms } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function MoviDetail() {
-    const {id} = useParms();
+    const {id} = useParams();
 
     return(
         <div>
