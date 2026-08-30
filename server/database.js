@@ -14,7 +14,7 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS actors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
     imdb_url TEXT
   );
 
