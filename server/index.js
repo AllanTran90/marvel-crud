@@ -17,6 +17,25 @@ app.get('/api/movies', ( req, res) =>{
     res.json(movies);
 } )
 
+app.get('/api/movies/:id', (req, res) => {
+    const { id } = req.params;
+
+    const movie = db.prepare('SELECT * FROM movies WHERE id = ?').get(id);
+
+    if (!movie) {
+        return res.status(404).json({ error: 'Movie not found' });
+    }
+
+    const actors = db.prepare(`
+        SELECT actors.id, actors.name, movie_actors.character_name
+        FROM actors
+        JOIN movie_actors ON actors.id = movie_actors.actor_id
+        WHERE movie_actors.movie_id = ?
+    `).all(id);
+
+    res.json({ ...movie, actors });
+});
+
 app.put('/api/movies/:id', (req, res) =>{
     const { id } = req.params;
     const { title, releaseYear } = req.body;
@@ -42,3 +61,4 @@ app.post('/api/movies', (req, res) => {
 app.listen(PORT,() => {
     console.log(`server running on http://localhost:${PORT}`);
 });
+
