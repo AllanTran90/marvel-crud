@@ -4,6 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 function MovieDetail() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [actorName, setActorName] = useState('');
+  const [characterName, setCharacterName] = useState('');
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/movies/${id}`)
@@ -11,6 +13,23 @@ function MovieDetail() {
       .then((data) => setMovie(data))
       .catch((err) => console.error('Something went wrong fetching movie:', err));
   }, [id]);
+
+  const handleAddActor = (e) => {
+    e.preventDefault();
+
+    fetch(`http://localhost:3001/api/movies/${id}/actors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: actorName, character_name: characterName }),
+    })
+      .then((res) => res.json())
+      .then((newActor) => {
+        setMovie({ ...movie, actors: [...movie.actors, newActor] });
+        setActorName('');
+        setCharacterName('');
+      })
+      .catch((err) => console.error('Something went wrong adding actor:', err));
+  };
 
   if (!movie) {
     return <p>Loading...</p>;
@@ -34,6 +53,22 @@ function MovieDetail() {
           ))}
         </ul>
       )}
+
+      <form onSubmit={handleAddActor}>
+        <input
+          type="text"
+          placeholder="Actor name"
+          value={actorName}
+          onChange={(e) => setActorName(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Character name"
+          value={characterName}
+          onChange={(e) => setCharacterName(e.target.value)}
+        />
+        <button type="submit">Add actor</button>
+      </form>
     </div>
   );
 }
