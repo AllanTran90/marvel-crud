@@ -78,6 +78,25 @@ app.post("/api/movies/:id/actors", (req, res) => {
   res.json({ id: actor.id, name: actor.name, character_name });
 });
 
+app.get('/api/actors/:id', (req, res) => {
+    const { id } = req.params;
+
+    const actor = db.prepare('SELECT * FROM actors WHERE id = ?').get(id);
+
+    if (!actor) {
+        return res.status(404).json({ error: 'Actor not found' });
+    }
+
+    const movies = db.prepare(`
+        SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
+        FROM movies
+        JOIN movie_actors ON movies.id = movie_actors.movie_id
+        WHERE movie_actors.actor_id = ?
+    `).all(id);
+
+    res.json({ ...actor, movies });
+});
+
 app.post("/api/movies", (req, res) => {
   const { title, releaseYear } = req.body;
   const stmt = db.prepare(

@@ -1,34 +1,36 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 
 function MovieDetail() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
-  const [actorName, setActorName] = useState('');
-  const [characterName, setCharacterName] = useState('');
+  const [actorName, setActorName] = useState("");
+  const [characterName, setCharacterName] = useState("");
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/movies/${id}`)
       .then((res) => res.json())
       .then((data) => setMovie(data))
-      .catch((err) => console.error('Something went wrong fetching movie:', err));
+      .catch((err) =>
+        console.error("Something went wrong fetching movie:", err),
+      );
   }, [id]);
 
   const handleAddActor = (e) => {
     e.preventDefault();
 
     fetch(`http://localhost:3001/api/movies/${id}/actors`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: actorName, character_name: characterName }),
     })
       .then((res) => res.json())
       .then((newActor) => {
         setMovie({ ...movie, actors: [...movie.actors, newActor] });
-        setActorName('');
-        setCharacterName('');
+        setActorName("");
+        setCharacterName("");
       })
-      .catch((err) => console.error('Something went wrong adding actor:', err));
+      .catch((err) => console.error("Something went wrong adding actor:", err));
   };
 
   if (!movie) {
@@ -48,7 +50,8 @@ function MovieDetail() {
         <ul>
           {movie.actors.map((actor) => (
             <li key={actor.id}>
-              {actor.name} as {actor.character_name}
+              <Link to={`/actors/${actor.id}`}>{actor.name}</Link> as{" "}
+              {actor.character_name}
             </li>
           ))}
         </ul>
