@@ -97,6 +97,13 @@ app.get('/api/actors/:id', (req, res) => {
     res.json({ ...actor, movies });
 });
 
+app.delete("/api/actors/:id", (req, res) => {
+  const { id } = req.params;
+  const stmt = db.prepare("DELETE FROM actors WHERE id = ?");
+  stmt.run(id);
+  res.json({ message: `Actor ${id} deleted` });
+});
+
 app.post("/api/movies", (req, res) => {
   const { title, releaseYear } = req.body;
   const stmt = db.prepare(

@@ -4,6 +4,9 @@ import { useParams, Link } from "react-router-dom";
 function ActorDetail() {
   const { id } = useParams();
   const [actor, setActor] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editImdbUrl, setEditImdbUrl] = useState("");
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/actors/${id}`)
@@ -14,6 +17,41 @@ function ActorDetail() {
       );
   }, [id]);
 
+  const handleEditClick = () => {
+    setEditName(actor.name);
+    setEditImdbUrl(actor.imdb_url || "");
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = () => {
+    fetch(`http://localhost:3001/api/actors/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: editName, imdb_url: editImdbUrl }),
+    })
+      .then((res) => res.json())
+      .then((updatedActor) => {
+        setActor(updatedActor);
+        setIsEditing(false);
+      })
+      .catch((err) =>
+        console.error("Something went wrong updating actor:", err),
+      );
+  };
+
+  const handleDelete = () => {
+    fetch(`http://localhost:3001/api/actors/${id}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        // Skådespelaren är borta, så vi kan inte stanna kvar på den här sidan
+        window.location.href = "/";
+      })
+      .catch((err) =>
+        console.error("Something went wrong deleting actor:", err),
+      );
+  };
+
   if (!actor) {
     return <p>Loading...</p>;
   }
@@ -21,16 +59,42 @@ function ActorDetail() {
   return (
     <div>
       <Link to="/">&larr; Back to movies</Link>
-      <h1>{actor.name}</h1>
 
-      {actor.imdb_url ? (
-        <p>
-          <a href={actor.imdb_url} target="_blank" rel="noopener noreferrer">
-            View on IMDb
-          </a>
-        </p>
+      {isEditing ? (
+        <div>
+          <input
+            type="text"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+          />
+          <input
+            type="text"
+            value={editImdbUrl}
+            onChange={(e) => setEditImdbUrl(e.target.value)}
+          />
+          <button onClick={handleSaveEdit}>Save</button>
+          <button onClick={() => setIsEditing(false)}>Avbryt</button>
+        </div>
       ) : (
-        <p>No IMDb link added yet.</p>
+        <div>
+          <h1>{actor.name}</h1>
+          <button onClick={handleEditClick}>Edit</button>
+          <button onClick={handleDelete}>Delete</button>
+
+          {actor.imdb_url ? (
+            <p>
+              <a
+                href={actor.imdb_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View on IMDb
+              </a>
+            </p>
+          ) : (
+            <p>No IMDb link added yet.</p>
+          )}
+        </div>
       )}
 
       <h2>Movies</h2>
