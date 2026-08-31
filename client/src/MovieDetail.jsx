@@ -6,6 +6,9 @@ function MovieDetail() {
   const [movie, setMovie] = useState(null);
   const [actorName, setActorName] = useState("");
   const [characterName, setCharacterName] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editYear, setEditYear] = useState("");
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/movies/${id}`)
@@ -33,6 +36,26 @@ function MovieDetail() {
       .catch((err) => console.error("Something went wrong adding actor:", err));
   };
 
+  const handleEditClick = () => {
+    setEditTitle(movie.title);
+    setEditYear(movie.releaseYear);
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = () => {
+  fetch(`http://localhost:3001/api/movies/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: editTitle, releaseYear: editYear }),
+  })
+    .then((res) => res.json())
+    .then((updatedMovie) => {
+      setMovie(updatedMovie);
+      setIsEditing(false);
+    })
+    .catch((err) => console.error("Something went wrong updating movie:", err));
+};
+
   if (!movie) {
     return <p>Loading...</p>;
   }
@@ -40,8 +63,29 @@ function MovieDetail() {
   return (
     <div>
       <Link to="/">&larr; Back to movies</Link>
-      <h1>{movie.title}</h1>
-      <p>{movie.releaseYear}</p>
+      {isEditing ? (
+        <div>
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+          />
+          <input
+            type="number"
+            value={editYear}
+            onChange={(e) => setEditYear(e.target.value)}
+          />
+
+          <button onClick={handleSaveEdit}>Spara</button>
+          <button onClick={() => setIsEditing(false)}>Avbryt</button>
+        </div>
+      ) : (
+        <div>
+          <h1>{movie.title}</h1>
+          <p>{movie.releaseYear}</p>
+          <button onClick={handleEditClick}>Redigera</button>
+        </div>
+      )}
 
       <h2>Actors</h2>
       {movie.actors.length === 0 ? (
