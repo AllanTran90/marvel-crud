@@ -29,7 +29,7 @@ app.get("/api/movies/:id", (req, res) => {
   const actors = db
     .prepare(
       `
-        SELECT actors.id, actors.name, movie_actors.character_name
+        SELECT actors.id, actors.name, actors.imdb_url, movie_actors.character_name
         FROM actors
         JOIN movie_actors ON actors.id = movie_actors.actor_id
         WHERE movie_actors.movie_id = ?
@@ -43,11 +43,25 @@ app.get("/api/movies/:id", (req, res) => {
 app.put("/api/movies/:id", (req, res) => {
   const { id } = req.params;
   const { title, releaseYear } = req.body;
-  const stmt = db.prepare(
-    "UPDATE movies SET title = ?, releaseYear = ? WHERE id = ?",
+
+  db.prepare("UPDATE movies SET title = ?, releaseYear = ? WHERE id = ?").run(
+    title,
+    releaseYear,
+    id,
   );
-  const result = stmt.run(title, releaseYear, id);
-  res.json({ id: Number(id), title, releaseYear });
+
+  const actors = db
+    .prepare(
+      `
+        SELECT actors.id, actors.name, actors.imdb_url, movie_actors.character_name
+        FROM actors
+        JOIN movie_actors ON actors.id = movie_actors.actor_id
+        WHERE movie_actors.movie_id = ?
+    `,
+    )
+    .all(id);
+
+  res.json({ id: Number(id), title, releaseYear, actors });
 });
 
 app.delete("/api/movies/:id", (req, res) => {
@@ -78,23 +92,51 @@ app.post("/api/movies/:id/actors", (req, res) => {
   res.json({ id: actor.id, name: actor.name, character_name });
 });
 
-app.get('/api/actors/:id', (req, res) => {
-    const { id } = req.params;
+app.get("/api/actors/:id", (req, res) => {
+  const { id } = req.params;
 
-    const actor = db.prepare('SELECT * FROM actors WHERE id = ?').get(id);
+  const actor = db.prepare("SELECT * FROM actors WHERE id = ?").get(id);
 
-    if (!actor) {
-        return res.status(404).json({ error: 'Actor not found' });
-    }
+  if (!actor) {
+    return res.status(404).json({ error: "Actor not found" });
+  }
 
-    const movies = db.prepare(`
+  const movies = db
+    .prepare(
+      `
         SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
         FROM movies
         JOIN movie_actors ON movies.id = movie_actors.movie_id
         WHERE movie_actors.actor_id = ?
-    `).all(id);
+    `,
+    )
+    .all(id);
 
-    res.json({ ...actor, movies });
+  res.json({ ...actor, movies });
+});
+
+app.put("/api/actors/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, imdb_url } = req.body;
+
+  db.prepare("UPDATE actors SET name = ?, imdb_url = ? WHERE id = ?").run(
+    name,
+    imdb_url,
+    id,
+  );
+
+  const movies = db
+    .prepare(
+      `
+    SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
+    FROM movies
+    JOIN movie_actors ON movies.id = movie_actors.movie_id
+    WHERE movie_actors.actor_id = ?
+  `,
+    )
+    .all(id);
+
+  res.json({ id: Number(id), name, imdb_url, movies });
 });
 
 app.delete("/api/actors/:id", (req, res) => {

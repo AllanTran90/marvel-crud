@@ -43,18 +43,20 @@ function MovieDetail() {
   };
 
   const handleSaveEdit = () => {
-  fetch(`http://localhost:3001/api/movies/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title: editTitle, releaseYear: editYear }),
-  })
-    .then((res) => res.json())
-    .then((updatedMovie) => {
-      setMovie(updatedMovie);
-      setIsEditing(false);
+    fetch(`http://localhost:3001/api/movies/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: editTitle, releaseYear: editYear }),
     })
-    .catch((err) => console.error("Something went wrong updating movie:", err));
-};
+      .then((res) => res.json())
+      .then((updatedMovie) => {
+        setMovie(updatedMovie);
+        setIsEditing(false);
+      })
+      .catch((err) =>
+        console.error("Something went wrong updating movie:", err),
+      );
+  };
 
   if (!movie) {
     return <p>Loading...</p>;
@@ -76,14 +78,14 @@ function MovieDetail() {
             onChange={(e) => setEditYear(e.target.value)}
           />
 
-          <button onClick={handleSaveEdit}>Spara</button>
-          <button onClick={() => setIsEditing(false)}>Avbryt</button>
+          <button onClick={handleSaveEdit}>Save</button>
+          <button onClick={() => setIsEditing(false)}>Cancell</button>
         </div>
       ) : (
         <div>
           <h1>{movie.title}</h1>
           <p>{movie.releaseYear}</p>
-          <button onClick={handleEditClick}>Redigera</button>
+          <button onClick={handleEditClick}>Edit</button>
         </div>
       )}
 
@@ -96,6 +98,20 @@ function MovieDetail() {
             <li key={actor.id}>
               <Link to={`/actors/${actor.id}`}>{actor.name}</Link> as{" "}
               {actor.character_name}
+              {actor.imdb_url && (
+                <>
+                  {" "}
+                  (
+                  <a
+                    href={actor.imdb_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    IMDb
+                  </a>
+                  )
+                </>
+              )}
             </li>
           ))}
         </ul>

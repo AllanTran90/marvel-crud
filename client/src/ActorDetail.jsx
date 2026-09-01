@@ -73,7 +73,7 @@ function ActorDetail() {
             onChange={(e) => setEditImdbUrl(e.target.value)}
           />
           <button onClick={handleSaveEdit}>Save</button>
-          <button onClick={() => setIsEditing(false)}>Avbryt</button>
+          <button onClick={() => setIsEditing(false)}>Cancell</button>
         </div>
       ) : (
         <div>
