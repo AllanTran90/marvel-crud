@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import styles from './MovieCard.module.css';
 
 function MovieCard({ movie, onDelete }) {
   const handleDeleteClick = (e) => {
@@ -7,7 +8,7 @@ function MovieCard({ movie, onDelete }) {
   };
 
   return (
-    <Link to={`/movies/${movie.id}`} className="movie-card">
+    <Link to={`/movies/${movie.id}`} className={styles.movieCard}>
       <h3>{movie.title}</h3>
       <p>{movie.releaseYear}</p>
       <button onClick={handleDeleteClick}>Delete</button>
