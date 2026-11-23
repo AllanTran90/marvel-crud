@@ -1,0 +1,261 @@
+/* Gemensam stil för MovieDetail och ActorDetail */
+.page {
+  --marvel-red: #e62429;
+  padding: 1.5rem 2rem 3rem;
+  text-align: left;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--marvel-red);
+}
+
+.loading {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+/* Hero-sektion högst upp */
+.hero {
+  padding: 2rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #e62429 0%, #7a0d10 100%);
+  color: #fff;
+}
+
+.hero h1 {
+  margin: 0 0 0.75rem;
+  color: #fff;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.heroLink {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Knappar */
+.button {
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: filter 0.2s, background 0.2s, transform 0.1s;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.primary {
+  color: #fff;
+  background: var(--marvel-red);
+  border: none;
+}
+
+.primary:hover {
+  filter: brightness(1.1);
+}
+
+/* Ljus knapp på den röda hero-ytan */
+.onHero {
+  color: #7a0d10;
+  background: #fff;
+  border: none;
+}
+
+.onHero:hover {
+  filter: brightness(0.92);
+}
+
+.ghost {
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.ghost:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Formulär */
+.editForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--social-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.input {
+  flex: 1 1 200px;
+  padding: 0.65rem 0.9rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--marvel-red);
+  box-shadow: 0 0 0 3px rgba(230, 36, 41, 0.2);
+}
+
+.hero .input {
+  border-color: transparent;
+}
+
+.hero .input:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+/* Lista (skådespelare / filmer) */
+.section {
+  margin-top: 2.5rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.count {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.empty {
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--marvel-red);
+  border-radius: 10px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.itemMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-weight: 600;
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.itemTitle:hover {
+  color: var(--marvel-red);
+}
+
+.itemSub {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.itemExtra {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+a.itemExtra:hover {
+  color: #000;
+  background: #f5c518; /* IMDb-gul */
+  border-color: #f5c518;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .hero {
+    padding: 1.5rem;
+  }
+}

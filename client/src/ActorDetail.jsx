@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import styles from "./Detail.module.css";
 
 function ActorDetail() {
   const { id } = useParams();
@@ -53,59 +54,102 @@ function ActorDetail() {
   };
 
   if (!actor) {
-    return <p>Loading...</p>;
+    return <p className={styles.loading}>Loading...</p>;
   }
 
   return (
-    <div>
-      <Link to="/">&larr; Back to movies</Link>
+    <div className={styles.page}>
+      <Link to="/" className={styles.backLink}>
+        &larr; Back to movies
+      </Link>
 
-      {isEditing ? (
-        <div>
-          <input
-            type="text"
-            value={editName}
-            onChange={(e) => setEditName(e.target.value)}
-          />
-          <input
-            type="text"
-            value={editImdbUrl}
-            onChange={(e) => setEditImdbUrl(e.target.value)}
-          />
-          <button onClick={handleSaveEdit}>Save</button>
-          <button onClick={() => setIsEditing(false)}>Cancell</button>
-        </div>
-      ) : (
-        <div>
-          <h1>{actor.name}</h1>
-          <button onClick={handleEditClick}>Edit</button>
-          <button onClick={handleDelete}>Delete</button>
-
-          {actor.imdb_url ? (
-            <p>
-              <a
-                href={actor.imdb_url}
-                target="_blank"
-                rel="noopener noreferrer"
+      <section className={styles.hero}>
+        {isEditing ? (
+          <div className={styles.editForm}>
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="Name"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+            />
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="IMDb URL"
+              value={editImdbUrl}
+              onChange={(e) => setEditImdbUrl(e.target.value)}
+            />
+            <button
+              className={`${styles.button} ${styles.onHero}`}
+              onClick={handleSaveEdit}
+            >
+              Save
+            </button>
+            <button
+              className={`${styles.button} ${styles.ghost}`}
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <>
+            <h1>{actor.name}</h1>
+            <div className={styles.meta}>
+              {actor.imdb_url ? (
+                <a
+                  className={styles.heroLink}
+                  href={actor.imdb_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View on IMDb &rarr;
+                </a>
+              ) : (
+                <span className={styles.muted}>No IMDb link added yet.</span>
+              )}
+            </div>
+            <div className={styles.actions}>
+              <button
+                className={`${styles.button} ${styles.onHero}`}
+                onClick={handleEditClick}
               >
-                View on IMDb
-              </a>
-            </p>
-          ) : (
-            <p>No IMDb link added yet.</p>
-          )}
-        </div>
-      )}
+                Edit
+              </button>
+              <button
+                className={`${styles.button} ${styles.ghost}`}
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </>
+        )}
+      </section>
 
-      <h2>Movies</h2>
-      <ul>
-        {actor.movies.map((movie) => (
-          <li key={movie.id}>
-            <Link to={`/movies/${movie.id}`}>{movie.title}</Link> as{" "}
-            {movie.character_name} ({movie.releaseYear})
-          </li>
-        ))}
-      </ul>
+      <section className={styles.section}>
+        <div className={styles.sectionTitle}>
+          <h2>Movies</h2>
+          <span className={styles.count}>({actor.movies.length})</span>
+        </div>
+
+        <ul className={styles.list}>
+          {actor.movies.map((movie) => (
+            <li key={movie.id} className={styles.item}>
+              <div className={styles.itemMain}>
+                <Link to={`/movies/${movie.id}`} className={styles.itemTitle}>
+                  {movie.title}
+                </Link>
+                <span className={styles.itemSub}>
+                  as {movie.character_name}
+                </span>
+              </div>
+              <span className={styles.itemExtra}>{movie.releaseYear}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import MovieCard from './MovieCard';
+import styles from './MovieList.module.css';
 
 function MovieList() {
   const [movies, setMovies] = useState([]);
@@ -42,26 +43,42 @@ function MovieList() {
   };
 
   return (
-    <div>
-      <h1>Marvel Movies</h1>
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>
+          MCU Movie <span className={styles.accent}>Tracker</span>
+        </h1>
+        <p className={styles.subtitle}>
+          Keep track of movies, actors and the characters they play
+        </p>
+      </header>
 
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <input
+          className={styles.input}
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <input
+          className={`${styles.input} ${styles.yearInput}`}
           type="number"
           placeholder="Release year"
           value={releaseYear}
           onChange={(e) => setReleaseYear(e.target.value)}
         />
-        <button type="submit">Add movie</button>
+        <button className={styles.addButton} type="submit">
+          Add movie
+        </button>
       </form>
 
-      <div className="movie-grid">
+      <div className={styles.sectionTitle}>
+        <h2>All movies</h2>
+        <span className={styles.count}>({movies.length})</span>
+      </div>
+
+      <div className={styles.grid}>
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} onDelete={handleDelete} />
         ))}

@@ -9,9 +9,15 @@ function MovieCard({ movie, onDelete }) {
 
   return (
     <Link to={`/movies/${movie.id}`} className={styles.movieCard}>
-      <h3>{movie.title}</h3>
-      <p>{movie.releaseYear}</p>
-      <button onClick={handleDeleteClick}>Delete</button>
+      <div className={styles.poster}>
+        <span className={styles.year}>{movie.releaseYear}</span>
+      </div>
+      <div className={styles.body}>
+        <h3>{movie.title}</h3>
+        <button className={styles.deleteButton} onClick={handleDeleteClick}>
+          Delete
+        </button>
+      </div>
     </Link>
   );
 }

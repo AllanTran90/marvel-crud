@@ -1,0 +1,9 @@
+.footer {
+  /* #root är en flex-kolumn, så margin-top: auto trycker ner foten till botten */
+  margin-top: auto;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text);
+}

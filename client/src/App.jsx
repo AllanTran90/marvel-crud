@@ -3,14 +3,18 @@ import "./App.css";
 import MovieList from "./MovieList";
 import MovieDetail from "./MovieDetail";
 import ActorDetail from "./ActorDetail";
+import Footer from "./Footer";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MovieList />} />
-      <Route path="/movies/:id" element={<MovieDetail />} />
-      <Route path="/actors/:id" element={<ActorDetail />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<MovieList />} />
+        <Route path="/movies/:id" element={<MovieDetail />} />
+        <Route path="/actors/:id" element={<ActorDetail />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }
 
