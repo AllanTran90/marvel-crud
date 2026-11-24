@@ -8,6 +8,46 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+// --- Hjälpfunktioner: varje SQL-fråga finns bara på ett ställe ---
+
+function getMovieWithActors(id) {
+  const movie = db.prepare("SELECT * FROM movies WHERE id = ?").get(id);
+  if (!movie) return null;
+
+  const actors = db
+    .prepare(
+      `
+        SELECT actors.id, actors.name, actors.imdb_url, movie_actors.character_name
+        FROM actors
+        JOIN movie_actors ON actors.id = movie_actors.actor_id
+        WHERE movie_actors.movie_id = ?
+      `,
+    )
+    .all(id);
+
+  return { ...movie, actors };
+}
+
+function getActorWithMovies(id) {
+  const actor = db.prepare("SELECT * FROM actors WHERE id = ?").get(id);
+  if (!actor) return null;
+
+  const movies = db
+    .prepare(
+      `
+        SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
+        FROM movies
+        JOIN movie_actors ON movies.id = movie_actors.movie_id
+        WHERE movie_actors.actor_id = ?
+      `,
+    )
+    .all(id);
+
+  return { ...actor, movies };
+}
+
+// --- Routes ---
+
 app.get("/api/test", (req, res) => {
   res.json({ message: "server work!! WIIHOO!" });
 });
@@ -18,26 +58,13 @@ app.get("/api/movies", (req, res) => {
 });
 
 app.get("/api/movies/:id", (req, res) => {
-  const { id } = req.params;
-
-  const movie = db.prepare("SELECT * FROM movies WHERE id = ?").get(id);
+  const movie = getMovieWithActors(req.params.id);
 
   if (!movie) {
     return res.status(404).json({ error: "Movie not found" });
   }
 
-  const actors = db
-    .prepare(
-      `
-        SELECT actors.id, actors.name, actors.imdb_url, movie_actors.character_name
-        FROM actors
-        JOIN movie_actors ON actors.id = movie_actors.actor_id
-        WHERE movie_actors.movie_id = ?
-    `,
-    )
-    .all(id);
-
-  res.json({ ...movie, actors });
+  res.json(movie);
 });
 
 app.put("/api/movies/:id", (req, res) => {
@@ -50,18 +77,13 @@ app.put("/api/movies/:id", (req, res) => {
     id,
   );
 
-  const actors = db
-    .prepare(
-      `
-        SELECT actors.id, actors.name, actors.imdb_url, movie_actors.character_name
-        FROM actors
-        JOIN movie_actors ON actors.id = movie_actors.actor_id
-        WHERE movie_actors.movie_id = ?
-    `,
-    )
-    .all(id);
+  const movie = getMovieWithActors(id);
 
-  res.json({ id: Number(id), title, releaseYear, actors });
+  if (!movie) {
+    return res.status(404).json({ error: "Movie not found" });
+  }
+
+  res.json(movie);
 });
 
 app.delete("/api/movies/:id", (req, res) => {
@@ -93,26 +115,13 @@ app.post("/api/movies/:id/actors", (req, res) => {
 });
 
 app.get("/api/actors/:id", (req, res) => {
-  const { id } = req.params;
-
-  const actor = db.prepare("SELECT * FROM actors WHERE id = ?").get(id);
+  const actor = getActorWithMovies(req.params.id);
 
   if (!actor) {
     return res.status(404).json({ error: "Actor not found" });
   }
 
-  const movies = db
-    .prepare(
-      `
-        SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
-        FROM movies
-        JOIN movie_actors ON movies.id = movie_actors.movie_id
-        WHERE movie_actors.actor_id = ?
-    `,
-    )
-    .all(id);
-
-  res.json({ ...actor, movies });
+  res.json(actor);
 });
 
 app.put("/api/actors/:id", (req, res) => {
@@ -125,18 +134,13 @@ app.put("/api/actors/:id", (req, res) => {
     id,
   );
 
-  const movies = db
-    .prepare(
-      `
-    SELECT movies.id, movies.title, movies.releaseYear, movie_actors.character_name
-    FROM movies
-    JOIN movie_actors ON movies.id = movie_actors.movie_id
-    WHERE movie_actors.actor_id = ?
-  `,
-    )
-    .all(id);
+  const actor = getActorWithMovies(id);
 
-  res.json({ id: Number(id), name, imdb_url, movies });
+  if (!actor) {
+    return res.status(404).json({ error: "Actor not found" });
+  }
+
+  res.json(actor);
 });
 
 app.delete("/api/actors/:id", (req, res) => {
