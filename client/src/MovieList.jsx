@@ -1,46 +1,51 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import MovieCard from './MovieCard';
+import ErrorMessage from './ErrorMessage';
 import styles from './MovieList.module.css';
-import { API_URL } from './api';
+import { apiFetch } from './api';
 
 function MovieList() {
   const [movies, setMovies] = useState([]);
   const [title, setTitle] = useState('');
   const [releaseYear, setReleaseYear] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch(`${API_URL}/movies`)
-      .then((res) => res.json())
+    apiFetch('/movies')
       .then((data) => setMovies(data))
-      .catch((err) => console.error('Something went wrong in fetch:', err));
+      .catch((err) => setError(err.message))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError('');
 
-    fetch(`${API_URL}/movies`, {
+    apiFetch('/movies', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, releaseYear }),
+      body: { title, releaseYear },
     })
-      .then((res) => res.json())
       .then((newMovie) => {
-        setMovies([...movies, newMovie]);
+        // Funktionsvarianten av setState använder alltid senaste listan
+        setMovies((prev) => [...prev, newMovie]);
         setTitle('');
         setReleaseYear('');
       })
-      .catch((err) => console.error('Something went wrong when adding movie:', err));
+      .catch((err) => setError(err.message));
   };
 
-  const handleDelete = (id) => {
-    fetch(`${API_URL}/movies/${id}`, {
-      method: 'DELETE',
-    })
-      .then((res) => res.json())
+  const handleDelete = (movie) => {
+    if (!window.confirm(`Delete "${movie.title}"? This cannot be undone.`)) {
+      return;
+    }
+    setError('');
+
+    apiFetch(`/movies/${movie.id}`, { method: 'DELETE' })
       .then(() => {
-        setMovies(movies.filter((movie) => movie.id !== id));
+        setMovies((prev) => prev.filter((m) => m.id !== movie.id));
       })
-      .catch((err) => console.error('Something went wrong when deleting movie:', err));
+      .catch((err) => setError(err.message));
   };
 
   return (
@@ -55,12 +60,15 @@ function MovieList() {
       </header>
 
       <form className={styles.form} onSubmit={handleSubmit}>
+        {/* required/min/max ger snabb feedback i webbläsaren.
+            Servern validerar ändå, eftersom det här går att kringgå. */}
         <input
           className={styles.input}
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
         />
         <input
           className={`${styles.input} ${styles.yearInput}`}
@@ -68,22 +76,35 @@ function MovieList() {
           placeholder="Release year"
           value={releaseYear}
           onChange={(e) => setReleaseYear(e.target.value)}
+          min="1900"
+          max="2100"
+          required
         />
         <button className={styles.addButton} type="submit">
           Add movie
         </button>
       </form>
 
+      <ErrorMessage message={error} onDismiss={() => setError('')} />
+
       <div className={styles.sectionTitle}>
         <h2>All movies</h2>
-        <span className={styles.count}>({movies.length})</span>
+        {!isLoading && <span className={styles.count}>({movies.length})</span>}
       </div>
 
-      <div className={styles.grid}>
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} onDelete={handleDelete} />
-        ))}
-      </div>
+      {isLoading ? (
+        <p className={styles.status}>Loading movies...</p>
+      ) : movies.length === 0 ? (
+        !error && (
+          <p className={styles.status}>No movies yet. Add one above!</p>
+        )
+      ) : (
+        <div className={styles.grid}>
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} onDelete={handleDelete} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

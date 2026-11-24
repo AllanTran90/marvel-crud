@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import ErrorMessage from "./ErrorMessage";
 import styles from "./Detail.module.css";
-import { API_URL } from "./api";
+import { apiFetch } from "./api";
 
 function MovieDetail() {
   const { id } = useParams();
@@ -11,54 +12,69 @@ function MovieDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editYear, setEditYear] = useState("");
+  // loadError: sidan kunde inte laddas alls (t.ex. filmen finns inte)
+  // error: en enskild åtgärd misslyckades (t.ex. spara), sidan visas ändå
+  const [loadError, setLoadError] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${API_URL}/movies/${id}`)
-      .then((res) => res.json())
+    apiFetch(`/movies/${id}`)
       .then((data) => setMovie(data))
-      .catch((err) =>
-        console.error("Something went wrong fetching movie:", err),
-      );
+      .catch((err) => setLoadError(err.message));
   }, [id]);
 
   const handleAddActor = (e) => {
     e.preventDefault();
+    setError("");
 
-    fetch(`${API_URL}/movies/${id}/actors`, {
+    apiFetch(`/movies/${id}/actors`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: actorName, character_name: characterName }),
+      body: { name: actorName, character_name: characterName },
     })
-      .then((res) => res.json())
       .then((newActor) => {
-        setMovie({ ...movie, actors: [...movie.actors, newActor] });
+        setMovie((prev) => ({ ...prev, actors: [...prev.actors, newActor] }));
         setActorName("");
         setCharacterName("");
       })
-      .catch((err) => console.error("Something went wrong adding actor:", err));
+      .catch((err) => setError(err.message));
   };
 
   const handleEditClick = () => {
     setEditTitle(movie.title);
     setEditYear(movie.releaseYear);
+    setError("");
     setIsEditing(true);
   };
 
-  const handleSaveEdit = () => {
-    fetch(`${API_URL}/movies/${id}`, {
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    setError("");
+
+    apiFetch(`/movies/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: editTitle, releaseYear: editYear }),
+      body: { title: editTitle, releaseYear: editYear },
     })
-      .then((res) => res.json())
       .then((updatedMovie) => {
         setMovie(updatedMovie);
         setIsEditing(false);
       })
-      .catch((err) =>
-        console.error("Something went wrong updating movie:", err),
-      );
+      .catch((err) => setError(err.message)); // stanna kvar i redigeringsläget
   };
+
+  const backLink = (
+    <Link to="/" className={styles.backLink}>
+      &larr; Back to movies
+    </Link>
+  );
+
+  if (loadError) {
+    return (
+      <div className={styles.page}>
+        {backLink}
+        <ErrorMessage message={loadError} />
+      </div>
+    );
+  }
 
   if (!movie) {
     return <p className={styles.loading}>Loading...</p>;
@@ -66,38 +82,46 @@ function MovieDetail() {
 
   return (
     <div className={styles.page}>
-      <Link to="/" className={styles.backLink}>
-        &larr; Back to movies
-      </Link>
+      {backLink}
 
       <section className={styles.hero}>
         {isEditing ? (
-          <div className={styles.editForm}>
+          <form className={styles.editForm} onSubmit={handleSaveEdit}>
             <input
               className={styles.input}
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
+              aria-label="Title"
+              required
             />
             <input
               className={styles.input}
               type="number"
               value={editYear}
               onChange={(e) => setEditYear(e.target.value)}
+              aria-label="Release year"
+              min="1900"
+              max="2100"
+              required
             />
             <button
+              type="submit"
               className={`${styles.button} ${styles.onHero}`}
-              onClick={handleSaveEdit}
             >
               Save
             </button>
             <button
+              type="button"
               className={`${styles.button} ${styles.ghost}`}
-              onClick={() => setIsEditing(false)}
+              onClick={() => {
+                setIsEditing(false);
+                setError("");
+              }}
             >
               Cancel
             </button>
-          </div>
+          </form>
         ) : (
           <>
             <h1>{movie.title}</h1>
@@ -106,6 +130,7 @@ function MovieDetail() {
             </div>
             <div className={styles.actions}>
               <button
+                type="button"
                 className={`${styles.button} ${styles.onHero}`}
                 onClick={handleEditClick}
               >
@@ -115,6 +140,8 @@ function MovieDetail() {
           </>
         )}
       </section>
+
+      <ErrorMessage message={error} onDismiss={() => setError("")} />
 
       <section className={styles.section}>
         <div className={styles.sectionTitle}>
@@ -132,9 +159,11 @@ function MovieDetail() {
                   <Link to={`/actors/${actor.id}`} className={styles.itemTitle}>
                     {actor.name}
                   </Link>
-                  <span className={styles.itemSub}>
-                    as {actor.character_name}
-                  </span>
+                  {actor.character_name && (
+                    <span className={styles.itemSub}>
+                      as {actor.character_name}
+                    </span>
+                  )}
                 </div>
                 {actor.imdb_url && (
                   <a
@@ -158,6 +187,7 @@ function MovieDetail() {
             placeholder="Actor name"
             value={actorName}
             onChange={(e) => setActorName(e.target.value)}
+            required
           />
           <input
             className={styles.input}
@@ -166,7 +196,10 @@ function MovieDetail() {
             value={characterName}
             onChange={(e) => setCharacterName(e.target.value)}
           />
-          <button className={`${styles.button} ${styles.primary}`} type="submit">
+          <button
+            className={`${styles.button} ${styles.primary}`}
+            type="submit"
+          >
             Add actor
           </button>
         </form>
