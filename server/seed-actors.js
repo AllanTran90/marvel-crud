@@ -491,6 +491,15 @@ const casts = {
     ["Natasha Lyonne", "Rachel Rozman"],
     ["John Malkovich", "Ivan Kragoff"],
   ],
+  37: [ // Spider-Man: Brand New Day (rollista enligt kända uppgifter juni 2026)
+    ["Tom Holland", "Peter Parker / Spider-Man"],
+    ["Zendaya", "Michelle \"MJ\" Jones"],
+    ["Jacob Batalon", "Ned Leeds"],
+    ["Mark Ruffalo", "Bruce Banner / Hulk"],
+    ["Jon Bernthal", "Frank Castle / Punisher"],
+    ["Michael Mando", "Mac Gargan / Scorpion"],
+    ["Sadie Sink", "Undisclosed role"],
+  ],
 };
 
 const findActor = db.prepare("SELECT id FROM actors WHERE name = ?");
