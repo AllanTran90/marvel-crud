@@ -1,6 +1,5 @@
 /* Gemensam stil för MovieDetail och ActorDetail */
 .page {
-  --marvel-red: #e62429;
   padding: 1.5rem 2rem 3rem;
   text-align: left;
 }
@@ -27,7 +26,7 @@
 .hero {
   padding: 2rem;
   border-radius: 16px;
-  background: linear-gradient(135deg, #e62429 0%, #7a0d10 100%);
+  background: var(--marvel-gradient);
   color: #fff;
 }
 
@@ -72,32 +71,16 @@
 
 /* Knappar */
 .button {
-  padding: 0.55rem 1.1rem;
-  font: inherit;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: filter 0.2s, background 0.2s, transform 0.1s;
-}
-
-.button:active {
-  transform: scale(0.97);
+  composes: button from "./Form.module.css";
 }
 
 .primary {
-  color: #fff;
-  background: var(--marvel-red);
-  border: none;
-}
-
-.primary:hover {
-  filter: brightness(1.1);
+  composes: primary from "./Form.module.css";
 }
 
 /* Ljus knapp på den röda hero-ytan */
 .onHero {
-  color: #7a0d10;
+  color: var(--marvel-red-dark);
   background: #fff;
   border: none;
 }
@@ -124,32 +107,12 @@
 }
 
 .form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  composes: form from "./Form.module.css";
   margin-top: 1.5rem;
-  padding: 1.25rem;
-  background: var(--social-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
 }
 
 .input {
-  flex: 1 1 200px;
-  padding: 0.65rem 0.9rem;
-  font: inherit;
-  font-size: 1rem;
-  color: var(--text-h);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--marvel-red);
-  box-shadow: 0 0 0 3px rgba(230, 36, 41, 0.2);
+  composes: input from "./Form.module.css";
 }
 
 .hero .input {

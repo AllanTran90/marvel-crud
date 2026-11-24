@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import styles from "./Detail.module.css";
+import { API_URL } from "./api";
 
 function ActorDetail() {
   const { id } = useParams();
@@ -10,7 +11,7 @@ function ActorDetail() {
   const [editImdbUrl, setEditImdbUrl] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/actors/${id}`)
+    fetch(`${API_URL}/actors/${id}`)
       .then((res) => res.json())
       .then((data) => setActor(data))
       .catch((err) =>
@@ -25,7 +26,7 @@ function ActorDetail() {
   };
 
   const handleSaveEdit = () => {
-    fetch(`http://localhost:3001/api/actors/${id}`, {
+    fetch(`${API_URL}/actors/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: editName, imdb_url: editImdbUrl }),
@@ -41,7 +42,7 @@ function ActorDetail() {
   };
 
   const handleDelete = () => {
-    fetch(`http://localhost:3001/api/actors/${id}`, {
+    fetch(`${API_URL}/actors/${id}`, {
       method: "DELETE",
     })
       .then(() => {

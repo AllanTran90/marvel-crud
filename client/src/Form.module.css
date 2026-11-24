@@ -1,0 +1,54 @@
+/* Gemensamma formulär-stilar.
+   Används av andra moduler via: composes: input from "./Form.module.css"; */
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--social-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.input {
+  flex: 1 1 200px;
+  padding: 0.7rem 0.9rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--marvel-red);
+  box-shadow: var(--focus-ring);
+}
+
+.button {
+  padding: 0.65rem 1.25rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: filter 0.2s, background 0.2s, transform 0.1s;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.primary {
+  color: #fff;
+  background: var(--marvel-red);
+  border: none;
+}
+
+.primary:hover {
+  filter: brightness(1.1);
+}

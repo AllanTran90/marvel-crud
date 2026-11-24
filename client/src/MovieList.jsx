@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import MovieCard from './MovieCard';
 import styles from './MovieList.module.css';
+import { API_URL } from './api';
 
 function MovieList() {
   const [movies, setMovies] = useState([]);
@@ -8,7 +9,7 @@ function MovieList() {
   const [releaseYear, setReleaseYear] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/movies')
+    fetch(`${API_URL}/movies`)
       .then((res) => res.json())
       .then((data) => setMovies(data))
       .catch((err) => console.error('Something went wrong in fetch:', err));
@@ -17,7 +18,7 @@ function MovieList() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:3001/api/movies', {
+    fetch(`${API_URL}/movies`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, releaseYear }),
@@ -32,7 +33,7 @@ function MovieList() {
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:3001/api/movies/${id}`, {
+    fetch(`${API_URL}/movies/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())

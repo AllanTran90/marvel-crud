@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import styles from "./Detail.module.css";
+import { API_URL } from "./api";
 
 function MovieDetail() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ function MovieDetail() {
   const [editYear, setEditYear] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/movies/${id}`)
+    fetch(`${API_URL}/movies/${id}`)
       .then((res) => res.json())
       .then((data) => setMovie(data))
       .catch((err) =>
@@ -23,7 +24,7 @@ function MovieDetail() {
   const handleAddActor = (e) => {
     e.preventDefault();
 
-    fetch(`http://localhost:3001/api/movies/${id}/actors`, {
+    fetch(`${API_URL}/movies/${id}/actors`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: actorName, character_name: characterName }),
@@ -44,7 +45,7 @@ function MovieDetail() {
   };
 
   const handleSaveEdit = () => {
-    fetch(`http://localhost:3001/api/movies/${id}`, {
+    fetch(`${API_URL}/movies/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: editTitle, releaseYear: editYear }),

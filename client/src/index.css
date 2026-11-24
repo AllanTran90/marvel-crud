@@ -11,6 +11,16 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
+  /* Appens accentfärger, används av alla CSS-moduler */
+  --marvel-red: #e62429;
+  --marvel-red-dark: #7a0d10;
+  --marvel-gradient: linear-gradient(
+    135deg,
+    var(--marvel-red) 0%,
+    var(--marvel-red-dark) 100%
+  );
+  --focus-ring: 0 0 0 3px rgba(230, 36, 41, 0.2);
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;

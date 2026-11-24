@@ -1,5 +1,4 @@
 .page {
-  --marvel-red: #e62429;
   padding: 0 2rem 3rem;
   text-align: left;
 }
@@ -30,57 +29,22 @@
 
 /* Formulär */
 .form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  composes: form from "./Form.module.css";
   margin: 2rem 0;
-  padding: 1.25rem;
-  background: var(--social-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
 }
 
 .input {
-  flex: 1 1 200px;
-  padding: 0.7rem 0.9rem;
-  font: inherit;
-  font-size: 1rem;
-  color: var(--text-h);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  composes: input from "./Form.module.css";
 }
 
-.input:focus {
-  outline: none;
-  border-color: var(--marvel-red);
-  box-shadow: 0 0 0 3px rgba(230, 36, 41, 0.2);
-}
-
-.yearInput {
+/* Högre specificitet (två klasser) så att den alltid vinner över
+   flex-värdet i Form.module.css, oavsett vilken ordning CSS:en laddas i */
+.form .yearInput {
   flex: 0 1 160px;
 }
 
 .addButton {
-  padding: 0.7rem 1.4rem;
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--marvel-red);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: filter 0.2s, transform 0.1s;
-}
-
-.addButton:hover {
-  filter: brightness(1.1);
-}
-
-.addButton:active {
-  transform: scale(0.97);
+  composes: button primary from "./Form.module.css";
 }
 
 /* Grid */
